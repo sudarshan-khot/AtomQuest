@@ -251,10 +251,6 @@ LOGGING = {
             'style': '{',
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
-        'json': {
-            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
-            'format': '%(asctime)s %(name)s %(levelname)s %(message)s'
-        }
     },
     'filters': {
         'require_debug_false': {
@@ -268,74 +264,37 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-            'filters': ['require_debug_true'],
-        },
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
-            'maxBytes': 1024 * 1024 * 10,  # 10 MB
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'error_file': {
-            'level': 'ERROR',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'errors.log',
-            'maxBytes': 1024 * 1024 * 10,  # 10 MB
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'security_file': {
-            'level': 'WARNING',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'security.log',
-            'maxBytes': 1024 * 1024 * 10,  # 10 MB
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'performance_file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'performance.log',
-            'maxBytes': 1024 * 1024 * 10,  # 10 MB
-            'backupCount': 5,
             'formatter': 'verbose',
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
         'django.request': {
-            'handlers': ['error_file'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': False,
         },
         'django.security': {
-            'handlers': ['security_file'],
+            'handlers': ['console'],
             'level': 'WARNING',
             'propagate': False,
         },
         'portal': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'DEBUG' if DEBUG else 'INFO',
             'propagate': False,
         },
         'portal.performance': {
-            'handlers': ['performance_file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
     },
 }
-
-# Create logs directory if it doesn't exist
-LOGS_DIR = BASE_DIR / 'logs'
-LOGS_DIR.mkdir(exist_ok=True)
 
 # Configure logging
 logging.config.dictConfig(LOGGING)
