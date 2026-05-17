@@ -50,7 +50,7 @@ export default function AdminCycles() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Cycle Management</h1>
-          <p className="text-sm text-slate-400 mt-0.5">{cycles.length} cycle{cycles.length !== 1 ? 's' : ''}</p>
+          <p className="text-sm text-graphite-500 font-medium mt-0.5">{cycles.length} cycle{cycles.length !== 1 ? 's' : ''}</p>
         </div>
         <button onClick={() => { setShowCreate(true); reset() }} className="btn-primary">
           <Plus size={16} /> New Cycle
@@ -66,20 +66,20 @@ export default function AdminCycles() {
               <div className="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <h3 className="font-semibold text-slate-100">{cycle.name}</h3>
+                    <h3 className="font-semibold text-graphite-900">{cycle.name}</h3>
                     <Badge status={cycle.status} />
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-slate-500 mt-1">
+                  <div className="flex items-center gap-2 text-xs text-graphite-500 font-medium mt-1">
                     <Calendar size={12} />
                     <span>
                       {safeFormat(cycle.start_date, 'MMM d, yyyy')} — {safeFormat(cycle.end_date, 'MMM d, yyyy')}
                     </span>
                   </div>
                   {cycle.checkin_date_q1 && (
-                    <div className="flex items-center gap-3 mt-2 text-xs text-slate-500 flex-wrap">
+                    <div className="flex items-center gap-3 mt-2 text-xs text-graphite-500 flex-wrap">
                       {['q1','q2','q3','q4'].map(q => cycle[`checkin_date_${q}`] && (
                         <span key={q}>
-                          {q.toUpperCase()}: <span className="text-slate-400">{safeFormat(cycle[`checkin_date_${q}`], 'MMM d')}</span>
+                          {q.toUpperCase()}: <span className="text-graphite-700 font-semibold">{safeFormat(cycle[`checkin_date_${q}`], 'MMM d')}</span>
                         </span>
                       ))}
                     </div>

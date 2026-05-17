@@ -4,23 +4,27 @@ import { clsx } from 'clsx'
 const CONFIG = {
   success: {
     icon: CheckCircle,
-    iconClass: 'text-emerald-400',
-    wrapClass: 'border-emerald-500/30 bg-emerald-500/10',
+    iconClass: 'text-green-600',
+    wrapClass: 'border-green-200 bg-green-50',
+    textClass: 'text-green-900',
   },
   error: {
     icon: XCircle,
-    iconClass: 'text-rose-400',
-    wrapClass: 'border-rose-500/30 bg-rose-500/10',
+    iconClass: 'text-red-600',
+    wrapClass: 'border-red-200 bg-red-50',
+    textClass: 'text-red-900',
   },
   warning: {
     icon: AlertCircle,
-    iconClass: 'text-amber-400',
-    wrapClass: 'border-amber-500/30 bg-amber-500/10',
+    iconClass: 'text-amber-600',
+    wrapClass: 'border-amber-200 bg-amber-50',
+    textClass: 'text-amber-900',
   },
   info: {
     icon: Info,
-    iconClass: 'text-sky-400',
-    wrapClass: 'border-sky-500/30 bg-sky-500/10',
+    iconClass: 'text-sky-600',
+    wrapClass: 'border-sky-200 bg-sky-50',
+    textClass: 'text-sky-900',
   },
 }
 
@@ -29,14 +33,14 @@ function Toast({ toast, dismiss }) {
   const Icon = cfg.icon
   return (
     <div className={clsx(
-      'flex items-start gap-3 p-4 rounded-xl border backdrop-blur-sm shadow-xl toast-enter',
+      'flex items-start gap-3 p-4 rounded-xl border shadow-md toast-enter',
       cfg.wrapClass,
     )}>
       <Icon className={clsx('w-5 h-5 flex-shrink-0 mt-0.5', cfg.iconClass)} />
-      <p className="flex-1 text-sm text-slate-200 leading-relaxed">{toast.message}</p>
+      <p className={clsx('flex-1 text-sm leading-relaxed font-medium', cfg.textClass)}>{toast.message}</p>
       <button
         onClick={() => dismiss(toast.id)}
-        className="text-slate-400 hover:text-slate-200 transition-colors flex-shrink-0"
+        className="text-graphite-400 hover:text-graphite-700 transition-colors flex-shrink-0"
         aria-label="Dismiss"
       >
         <X className="w-4 h-4" />

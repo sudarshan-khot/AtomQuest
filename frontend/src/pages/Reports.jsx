@@ -10,14 +10,14 @@ import { Badge } from '../components/ui/Badge'
 import { PageLoader } from '../components/ui/Spinner'
 import { EmptyState } from '../components/ui/EmptyState'
 
-const CHART_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#0ea5e9']
+const CHART_COLORS = ['#A3E635', '#16a34a', '#d97706', '#dc2626', '#7c3aed', '#0284c7']
 
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="glass-card px-3 py-2 text-xs shadow-xl">
-      <p className="text-slate-300 font-medium mb-0.5">{label}</p>
-      <p className="text-primary-400">{payload[0].value.toFixed(1)}%</p>
+    <div className="bg-white border border-cream-300 rounded-lg px-3 py-2 text-xs shadow-lg">
+      <p className="text-graphite-700 font-medium mb-0.5">{label}</p>
+      <p className="text-primary-600 font-semibold">{payload[0].value.toFixed(1)}%</p>
     </div>
   )
 }
@@ -25,7 +25,7 @@ function CustomTooltip({ active, payload, label }) {
 function StatCard({ label, value, colorClass }) {
   return (
     <div className="glass-card p-5">
-      <p className="text-xs text-slate-400 mb-1">{label}</p>
+      <p className="text-xs text-graphite-500 font-medium mb-1">{label}</p>
       <p className={`text-3xl font-bold ${colorClass}`}>{value}</p>
     </div>
   )
@@ -120,10 +120,10 @@ export default function Reports() {
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Goals"    value={goals.length}              colorClass="text-slate-100" />
-        <StatCard label="Approved"       value={approvedGoals.length}      colorClass="text-emerald-400" />
-        <StatCard label="Check-ins"      value={checkins.length}           colorClass="text-sky-400" />
-        <StatCard label="Weighted Score" value={`${weightedScore.toFixed(1)}%`} colorClass="text-primary-400" />
+        <StatCard label="Total Goals"    value={goals.length}                   colorClass="text-graphite-900" />
+        <StatCard label="Approved"       value={approvedGoals.length}           colorClass="text-green-700" />
+        <StatCard label="Check-ins"      value={checkins.length}                colorClass="text-sky-700" />
+        <StatCard label="Weighted Score" value={`${weightedScore.toFixed(1)}%`} colorClass="text-primary-600" />
       </div>
 
       {approvedGoals.length === 0 ? (
@@ -139,9 +139,9 @@ export default function Reports() {
             <h2 className="section-title mb-4">Goal Progress</h2>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis domain={[0, 100]} tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(99,102,241,0.08)' }} />
+                <XAxis dataKey="name" tick={{ fill: '#424a53', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis domain={[0, 100]} tick={{ fill: '#424a53', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(163,230,53,0.08)' }} />
                 <Bar dataKey="progress" radius={[4, 4, 0, 0]}>
                   {chartData.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
                 </Bar>
@@ -158,8 +158,8 @@ export default function Reports() {
                 return (
                   <div key={g.id} className="space-y-1.5">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm text-slate-300 truncate flex-1">{g.title}</p>
-                      <span className="text-xs text-slate-500 flex-shrink-0">{g.weightage}% wt</span>
+                      <p className="text-sm text-graphite-800 truncate flex-1">{g.title}</p>
+                      <span className="text-xs text-graphite-500 font-medium flex-shrink-0">{g.weightage}% wt</span>
                     </div>
                     <ProgressBar value={progress} size="sm" />
                   </div>
@@ -173,9 +173,9 @@ export default function Reports() {
             <h2 className="section-title mb-4">Status Distribution</h2>
             <div className="space-y-2">
               {Object.entries(statusCounts).map(([status, count]) => (
-                <div key={status} className="flex items-center justify-between p-3 rounded-lg bg-slate-800/40">
+                <div key={status} className="flex items-center justify-between p-3 rounded-lg bg-cream-100 border border-cream-200">
                   <Badge status={status} />
-                  <span className="text-sm font-semibold text-slate-200">{count}</span>
+                  <span className="text-sm font-bold text-graphite-900">{count}</span>
                 </div>
               ))}
             </div>
@@ -183,9 +183,9 @@ export default function Reports() {
 
           {/* Weighted achievement */}
           <div className="glass-card p-5 flex flex-col items-center justify-center text-center gap-3">
-            <Award className="w-10 h-10 text-primary-400" />
-            <p className="text-sm text-slate-400">Overall Weighted Achievement</p>
-            <p className="text-5xl font-bold text-primary-400">{weightedScore.toFixed(1)}%</p>
+            <Award className="w-10 h-10 text-primary-600" />
+            <p className="text-sm text-graphite-600 font-medium">Overall Weighted Achievement</p>
+            <p className="text-5xl font-bold text-graphite-900">{weightedScore.toFixed(1)}%</p>
             <ProgressBar value={weightedScore} size="lg" className="w-full max-w-xs" />
           </div>
         </div>

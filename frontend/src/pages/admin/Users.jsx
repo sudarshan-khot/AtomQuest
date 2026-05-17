@@ -36,7 +36,7 @@ export default function AdminUsers() {
       <div className="page-header">
         <div>
           <h1 className="page-title">User Management</h1>
-          <p className="text-sm text-slate-400 mt-0.5">{users.length} user{users.length !== 1 ? 's' : ''}</p>
+          <p className="text-sm text-graphite-500 font-medium mt-0.5">{users.length} user{users.length !== 1 ? 's' : ''}</p>
         </div>
         <button onClick={() => setShowCreate(true)} className="btn-primary">
           <Plus size={16} /> Add User
@@ -62,19 +62,19 @@ export default function AdminUsers() {
                 <tr key={u.id}>
                   <td>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary-500/20 border border-primary-500/30 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xs font-semibold text-primary-400">{u.username?.[0]?.toUpperCase()}</span>
+                      <div className="w-8 h-8 rounded-full bg-graphite-900 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-bold text-primary-400">{u.username?.[0]?.toUpperCase()}</span>
                       </div>
                       <div className="min-w-0">
-                        <p className="font-medium text-slate-200 truncate">{u.username}</p>
-                        <p className="text-xs text-slate-500 truncate">{u.email}</p>
+                        <p className="font-semibold text-graphite-900 truncate">{u.username}</p>
+                        <p className="text-xs text-graphite-500 truncate">{u.email}</p>
                       </div>
                     </div>
                   </td>
                   <td>
                     <Badge status={u.profile?.role} label={u.profile?.role_display || u.profile?.role} />
                   </td>
-                  <td className="hidden sm:table-cell text-slate-400">
+                  <td className="hidden sm:table-cell text-graphite-700 font-medium">
                     {u.profile?.department_name || '—'}
                   </td>
                   <td>

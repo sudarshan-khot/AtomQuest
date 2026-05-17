@@ -15,8 +15,8 @@ function StatCard({ icon: Icon, label, value, colorBg, colorText, to }) {
         <Icon size={20} className={colorText} />
       </div>
       <div>
-        <p className="text-xl sm:text-2xl font-bold text-slate-100">{value}</p>
-        <p className="text-xs sm:text-sm text-slate-400">{label}</p>
+        <p className="text-xl sm:text-2xl font-bold text-graphite-900">{value}</p>
+        <p className="text-xs sm:text-sm text-graphite-500 font-medium">{label}</p>
       </div>
     </div>
   )
@@ -28,7 +28,7 @@ function SectionHeader({ title, to, linkLabel = 'View all' }) {
     <div className="flex items-center justify-between mb-4">
       <h2 className="section-title">{title}</h2>
       {to && (
-        <Link to={to} className="text-xs text-primary-400 hover:text-primary-300 flex items-center gap-1 transition-colors">
+        <Link to={to} className="text-xs text-primary-600 hover:text-primary-700 font-semibold flex items-center gap-1 transition-colors">
           {linkLabel} <ArrowRight size={12} />
         </Link>
       )}
@@ -62,10 +62,10 @@ export default function Dashboard() {
     <div className="space-y-6 animate-fade-in">
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatCard icon={Target}     label="Total Goals"    value={goals.length}              colorBg="bg-primary-500/15" colorText="text-primary-400"  to="/goals" />
-        <StatCard icon={CheckSquare} label="Approved"      value={approvedGoals.length}      colorBg="bg-emerald-500/15" colorText="text-emerald-400" to="/goals" />
-        <StatCard icon={Clock}      label="Pending Review" value={pendingGoals.length}        colorBg="bg-amber-500/15"  colorText="text-amber-400"   to={role !== 'employee' ? '/approvals' : '/goals'} />
-        <StatCard icon={TrendingUp} label="Avg Progress"   value={`${avgProgress.toFixed(0)}%`} colorBg="bg-sky-500/15" colorText="text-sky-400" />
+        <StatCard icon={Target}      label="Total Goals"    value={goals.length}                   colorBg="bg-primary-100"  colorText="text-primary-700"  to="/goals" />
+        <StatCard icon={CheckSquare} label="Approved"       value={approvedGoals.length}           colorBg="bg-green-100"    colorText="text-green-700"    to="/goals" />
+        <StatCard icon={Clock}       label="Pending Review" value={pendingGoals.length}             colorBg="bg-amber-100"    colorText="text-amber-700"    to={role !== 'employee' ? '/approvals' : '/goals'} />
+        <StatCard icon={TrendingUp}  label="Avg Progress"   value={`${avgProgress.toFixed(0)}%`}   colorBg="bg-sky-100"      colorText="text-sky-700" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -73,18 +73,18 @@ export default function Dashboard() {
         <div className="glass-card p-4 sm:p-5">
           <SectionHeader title="Recent Goals" to="/goals" />
           {goals.length === 0 ? (
-            <p className="text-sm text-slate-500 py-6 text-center">No goals yet</p>
+            <p className="text-sm text-graphite-400 py-6 text-center">No goals yet</p>
           ) : (
             <div className="space-y-2">
               {goals.slice(0, 5).map(goal => {
                 const ci = checkins.filter(c => c.goal === goal.id).sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0]
                 return (
-                  <div key={goal.id} className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/40 hover:bg-slate-800/60 transition-colors">
+                  <div key={goal.id} className="flex items-center gap-3 p-3 rounded-lg bg-cream-100 hover:bg-cream-200 transition-colors">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-200 truncate">{goal.title}</p>
+                      <p className="text-sm font-semibold text-graphite-900 truncate">{goal.title}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge status={goal.status} />
-                        <span className="text-xs text-slate-500">{goal.weightage}%</span>
+                        <span className="text-xs text-graphite-500 font-medium">{goal.weightage}%</span>
                       </div>
                     </div>
                     {ci && (
@@ -103,13 +103,13 @@ export default function Dashboard() {
         <div className="glass-card p-4 sm:p-5">
           <SectionHeader title="Recent Check-ins" to="/checkins" />
           {checkins.length === 0 ? (
-            <p className="text-sm text-slate-500 py-6 text-center">No check-ins yet</p>
+            <p className="text-sm text-graphite-400 py-6 text-center">No check-ins yet</p>
           ) : (
             <div className="space-y-2">
               {checkins.slice(0, 5).map(ci => (
-                <div key={ci.id} className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/40 hover:bg-slate-800/60 transition-colors">
+                <div key={ci.id} className="flex items-center gap-3 p-3 rounded-lg bg-cream-100 hover:bg-cream-200 transition-colors">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-200 truncate">{ci.goal_title}</p>
+                    <p className="text-sm font-semibold text-graphite-900 truncate">{ci.goal_title}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Badge status={ci.status} />
                     </div>
@@ -126,14 +126,14 @@ export default function Dashboard() {
 
       {/* Draft reminder */}
       {draftGoals.length > 0 && (
-        <div className="glass-card p-4 border-amber-500/20 bg-amber-500/5 flex items-center justify-between gap-4 flex-wrap">
+        <div className="glass-card p-4 border-amber-300 bg-amber-50 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <Clock className="w-5 h-5 text-amber-400 flex-shrink-0" />
-            <p className="text-sm text-slate-300">
-              You have <span className="font-semibold text-amber-300">{draftGoals.length}</span> draft goal{draftGoals.length > 1 ? 's' : ''} waiting to be submitted.
+            <Clock className="w-5 h-5 text-amber-600 flex-shrink-0" />
+            <p className="text-sm text-graphite-800">
+              You have <span className="font-bold text-amber-700">{draftGoals.length}</span> draft goal{draftGoals.length > 1 ? 's' : ''} waiting to be submitted.
             </p>
           </div>
-          <Link to="/goals" className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 transition-colors whitespace-nowrap">
+          <Link to="/goals" className="text-xs text-amber-700 hover:text-amber-900 font-semibold flex items-center gap-1 transition-colors whitespace-nowrap">
             Review <ArrowRight size={12} />
           </Link>
         </div>

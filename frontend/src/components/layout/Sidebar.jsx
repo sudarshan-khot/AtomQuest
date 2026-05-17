@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { clsx } from 'clsx'
 import {
   LayoutDashboard, Target, CheckSquare, BarChart3,
-  Users, Settings, LogOut, Zap, ChevronLeft, ChevronRight, ClipboardCheck,
+  Users, Settings, LogOut, ChevronLeft, ChevronRight, ClipboardCheck,
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
@@ -42,24 +42,30 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }) {
 
   return (
     <aside className={clsx(
-      'flex flex-col h-screen bg-slate-900/95 border-r border-slate-800/80',
+      'flex flex-col h-screen bg-graphite-900 border-r border-graphite-800',
       'sidebar-transition fixed left-0 top-0 z-30',
-      // Desktop: always visible, width controlled by collapsed
       'hidden lg:flex',
       collapsed ? 'lg:w-16' : 'lg:w-60',
-      // Mobile: full-width drawer, shown/hidden via mobileOpen
       mobileOpen && '!flex w-64',
     )}>
       {/* Logo */}
       <div className={clsx(
-        'flex items-center h-16 px-4 border-b border-slate-800/80 flex-shrink-0',
+        'flex items-center h-16 px-4 border-b border-graphite-800 flex-shrink-0',
         collapsed ? 'lg:justify-center' : 'gap-3',
       )}>
-        <div className="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center flex-shrink-0 shadow-sm shadow-primary-500/30">
-          <Zap className="w-4 h-4 text-white" />
-        </div>
-        {(!collapsed || mobileOpen) && (
-          <span className="font-bold text-slate-100 text-lg tracking-tight">AtomQuest</span>
+        {collapsed && !mobileOpen ? (
+          /* Collapsed: lime monogram */
+          <div className="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center flex-shrink-0">
+            <span className="text-graphite-900 font-black text-sm leading-none">A</span>
+          </div>
+        ) : (
+          /* Expanded: lime monogram + white text name */
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center flex-shrink-0">
+              <span className="text-graphite-900 font-black text-sm leading-none">A</span>
+            </div>
+            <span className="font-bold text-white text-lg tracking-tight">AtomQuest</span>
+          </div>
         )}
       </div>
 
@@ -74,8 +80,8 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }) {
               'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
               (collapsed && !mobileOpen) ? 'lg:justify-center' : '',
               isActive
-                ? 'bg-primary-500/15 text-primary-400 border border-primary-500/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60',
+                ? 'bg-primary-500 text-graphite-900'
+                : 'text-graphite-300 hover:text-white hover:bg-graphite-800',
             )}
             title={(collapsed && !mobileOpen) ? label : undefined}
           >
@@ -86,30 +92,25 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }) {
       </nav>
 
       {/* User + collapse */}
-      <div className="border-t border-slate-800/80 p-3 space-y-1 flex-shrink-0">
+      <div className="border-t border-graphite-800 p-3 space-y-1 flex-shrink-0">
         {(collapsed && !mobileOpen) ? (
-          /* Collapsed: avatar only with tooltip */
-          <div
-            className="flex justify-center px-3 py-2 mb-2"
-            title={user?.username}
-          >
-            <div className="w-8 h-8 rounded-full bg-primary-500/20 border border-primary-500/30 flex items-center justify-center flex-shrink-0">
+          <div className="flex justify-center px-3 py-2 mb-2" title={user?.username}>
+            <div className="w-8 h-8 rounded-full bg-primary-500/20 border border-primary-500/40 flex items-center justify-center flex-shrink-0">
               <span className="text-sm font-semibold text-primary-400">
                 {user?.username?.[0]?.toUpperCase()}
               </span>
             </div>
           </div>
         ) : (
-          /* Expanded: avatar + username + role */
-          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-800/40 mb-2">
-            <div className="w-8 h-8 rounded-full bg-primary-500/20 border border-primary-500/30 flex items-center justify-center flex-shrink-0">
+          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-graphite-800 mb-2">
+            <div className="w-8 h-8 rounded-full bg-primary-500/20 border border-primary-500/40 flex items-center justify-center flex-shrink-0">
               <span className="text-sm font-semibold text-primary-400">
                 {user?.username?.[0]?.toUpperCase()}
               </span>
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-medium text-slate-200 truncate">{user?.username}</p>
-              <p className="text-xs text-slate-500 capitalize">{role}</p>
+              <p className="text-xs font-medium text-white truncate">{user?.username}</p>
+              <p className="text-xs text-graphite-400 capitalize">{role}</p>
             </div>
           </div>
         )}
@@ -118,7 +119,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }) {
           onClick={() => { logout(); onMobileClose?.() }}
           className={clsx(
             'flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm',
-            'text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-150',
+            'text-graphite-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-150',
             (collapsed && !mobileOpen) ? 'lg:justify-center' : '',
           )}
           title={(collapsed && !mobileOpen) ? 'Logout' : undefined}
@@ -127,12 +128,11 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }) {
           {(!collapsed || mobileOpen) && <span>Logout</span>}
         </button>
 
-        {/* Collapse toggle — desktop only */}
         <button
           onClick={onToggle}
           className={clsx(
             'hidden lg:flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm',
-            'text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 transition-all duration-150',
+            'text-graphite-500 hover:text-graphite-200 hover:bg-graphite-800 transition-all duration-150',
             collapsed ? 'justify-center' : '',
           )}
         >

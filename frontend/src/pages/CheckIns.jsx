@@ -19,28 +19,28 @@ function CheckInCard({ ci }) {
       <div className="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-1">
-            <h3 className="font-semibold text-slate-100 break-words">{ci.goal_title}</h3>
+            <h3 className="font-semibold text-graphite-900 break-words">{ci.goal_title}</h3>
             <Badge status={ci.status} />
           </div>
-          <div className="flex items-center gap-3 sm:gap-4 text-xs text-slate-500 mt-1 flex-wrap">
-            <span>By: <span className="text-slate-300">{ci.user_name}</span></span>
-            <span>Value: <span className="text-slate-300">{ci.progress_value}</span></span>
-            {ci.cycle_name && <span>Cycle: <span className="text-slate-300">{ci.cycle_name}</span></span>}
+          <div className="flex items-center gap-3 sm:gap-4 text-xs text-graphite-500 mt-1 flex-wrap">
+            <span>By: <span className="text-graphite-800 font-medium">{ci.user_name}</span></span>
+            <span>Value: <span className="text-graphite-800 font-medium">{ci.progress_value}</span></span>
+            {ci.cycle_name && <span>Cycle: <span className="text-graphite-800 font-medium">{ci.cycle_name}</span></span>}
           </div>
           {ci.comments && (
-            <p className="text-sm text-slate-400 mt-2 italic">"{ci.comments}"</p>
+            <p className="text-sm text-graphite-600 mt-2 italic">"{ci.comments}"</p>
           )}
           {ci.rejection_comments && (
-            <div className="mt-2 p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20">
-              <p className="text-xs text-rose-300">
-                <span className="font-medium">Rejected: </span>{ci.rejection_comments}
+            <div className="mt-2 p-2.5 rounded-lg bg-red-50 border border-red-200">
+              <p className="text-xs text-red-700">
+                <span className="font-semibold">Rejected: </span>{ci.rejection_comments}
               </p>
             </div>
           )}
           {ci.approval_comments && (
-            <div className="mt-2 p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-              <p className="text-xs text-emerald-300">
-                <span className="font-medium">Approved: </span>{ci.approval_comments}
+            <div className="mt-2 p-2.5 rounded-lg bg-green-50 border border-green-200">
+              <p className="text-xs text-green-700">
+                <span className="font-semibold">Approved: </span>{ci.approval_comments}
               </p>
             </div>
           )}
@@ -96,7 +96,7 @@ export default function CheckIns() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Check-ins</h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-sm text-graphite-500 font-medium mt-0.5">
             {checkins.length} check-in{checkins.length !== 1 ? 's' : ''}
           </p>
         </div>
@@ -127,8 +127,8 @@ export default function CheckIns() {
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title="Submit Check-in" size="md">
         {approvedGoals.length === 0 ? (
           <div className="py-6 text-center">
-            <p className="text-sm text-slate-400">No approved goals available for check-in.</p>
-            <p className="text-xs text-slate-500 mt-1">Goals must be approved before you can submit a check-in.</p>
+            <p className="text-sm text-graphite-600">No approved goals available for check-in.</p>
+            <p className="text-xs text-graphite-400 mt-1">Goals must be approved before you can submit a check-in.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

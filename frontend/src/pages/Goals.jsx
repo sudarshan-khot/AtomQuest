@@ -72,7 +72,7 @@ export default function Goals() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Goals</h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-sm text-graphite-500 font-medium mt-0.5">
             {goals.length} goal{goals.length !== 1 ? 's' : ''} total
           </p>
         </div>

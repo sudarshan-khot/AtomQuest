@@ -89,7 +89,7 @@ export default function Approvals() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Approvals</h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-sm text-graphite-500 font-medium mt-0.5">
             {goals.length} goal{goals.length !== 1 ? 's' : ''} · {checkins.length} check-in{checkins.length !== 1 ? 's' : ''} pending
           </p>
         </div>

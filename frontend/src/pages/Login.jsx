@@ -1,13 +1,14 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { Zap, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { Spinner } from '../components/ui/Spinner'
+import logoSvg from '../static/logo.svg'
 
 export default function Login() {
-  const { login } = useAuth()
-  const navigate  = useNavigate()
+  const { login }   = useAuth()
+  const navigate    = useNavigate()
   const [showPw, setShowPw]   = useState(false)
   const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
@@ -28,25 +29,20 @@ export default function Login() {
   }
 
   return (
-    <div className="gradient-bg min-h-screen flex items-center justify-center p-4">
-      {/* Background glow */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
-      </div>
-
-      <div className="w-full max-w-md relative">
+    <div className="min-h-screen bg-cream-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-primary-500 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/30">
-            <Zap className="w-7 h-7 text-white" />
+          <div className="flex items-center gap-2.5 mb-1">
+            <img src={logoSvg} alt="" aria-hidden="true" className="h-10 w-auto" />
+            <span className="font-bold text-graphite-900 text-2xl tracking-tight">AtomQuest</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-50">AtomQuest</h1>
-          <p className="text-slate-400 text-sm mt-1">Goal Setting &amp; Tracking Portal</p>
+          <p className="text-graphite-500 text-sm">Goal Setting &amp; Tracking Portal</p>
         </div>
 
         {/* Card */}
-        <div className="glass-card p-6 sm:p-8">
-          <h2 className="text-lg font-semibold text-slate-100 mb-6">Sign in to your account</h2>
+        <div className="bg-white border border-cream-300 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 className="text-lg font-semibold text-graphite-900 mb-6">Sign in to your account</h2>
 
           {error && (
             <div className="alert-error mb-5">
@@ -83,7 +79,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPw(s => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-graphite-400 hover:text-graphite-700 transition-colors"
                   aria-label={showPw ? 'Hide password' : 'Show password'}
                 >
                   {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -95,16 +91,19 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full justify-center mt-2 py-2.5"
+              className="btn-primary w-full justify-center mt-2 py-2.5 text-graphite-900 font-semibold"
             >
               {loading ? <Spinner size="sm" /> : 'Sign in'}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-xs text-slate-600 mt-6">
-          AtomQuest © {new Date().getFullYear()}
-        </p>
+        <div className="text-center mt-6 space-y-2">
+          <Link to="/" className="text-xs text-graphite-400 hover:text-graphite-700 transition-colors">
+            ← Back to home
+          </Link>
+          <p className="text-xs text-graphite-300">AtomQuest © {new Date().getFullYear()}</p>
+        </div>
       </div>
     </div>
   )
