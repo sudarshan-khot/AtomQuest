@@ -5,6 +5,7 @@ import {
   Users, Settings, LogOut, ChevronLeft, ChevronRight, ClipboardCheck,
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
+import logoSvg from '../../static/logo.svg'
 
 const NAV = {
   employee: [
@@ -59,11 +60,15 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }) {
             <span className="text-graphite-900 font-black text-sm leading-none">A</span>
           </div>
         ) : (
-          /* Expanded: lime monogram + white text name */
+          /* Expanded: white-filtered logo icon + separate text label */
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center flex-shrink-0">
-              <span className="text-graphite-900 font-black text-sm leading-none">A</span>
-            </div>
+            <img
+              src={logoSvg}
+              alt=""
+              aria-hidden="true"
+              className="h-8 w-8 object-contain flex-shrink-0"
+              style={{ filter: 'brightness(0) invert(1)' }}
+            />
             <span className="font-bold text-white text-lg tracking-tight">AtomQuest</span>
           </div>
         )}
