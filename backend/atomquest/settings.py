@@ -10,6 +10,13 @@ from pathlib import Path
 import logging.config
 from datetime import timedelta
 
+# Load .env file if present (local development)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent.parent / '.env')
+except ImportError:
+    pass
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,6 +53,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # serve static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -76,11 +84,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'atomquest.wsgi.application'
 
 # Database Configuration
-# Supports both SQLite (development) and PostgreSQL (production)
+# Supports SQLite (development) and PostgreSQL/NeonDB (production)
 DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3')
 
 if DATABASE_URL.startswith('sqlite'):
-    # SQLite configuration for development
+    # SQLite — local development only
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -88,31 +96,20 @@ if DATABASE_URL.startswith('sqlite'):
         }
     }
 elif DATABASE_URL.startswith('postgres'):
-    # PostgreSQL configuration for production
-    try:
-        import dj_database_url
-        DATABASES = {
-            'default': dj_database_url.config(
-                default=DATABASE_URL,
-                conn_max_age=600,
-                conn_health_checks=True,
-            )
-        }
-    except ImportError:
-        # Fallback if dj_database_url is not installed
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': os.environ.get('DB_NAME', 'atomquest'),
-                'USER': os.environ.get('DB_USER', 'postgres'),
-                'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-                'HOST': os.environ.get('DB_HOST', 'localhost'),
-                'PORT': os.environ.get('DB_PORT', '5432'),
-                'CONN_MAX_AGE': 600,
-            }
-        }
+    # PostgreSQL / NeonDB — production
+    # dj_database_url handles both postgres:// and postgresql:// schemes,
+    # and preserves ?sslmode=require from the connection string.
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require='sslmode=require' in DATABASE_URL,
+        )
+    }
 else:
-    # Default to SQLite if URL format is not recognized
+    # Fallback to SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -164,6 +161,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+# WhiteNoise — compressed + cached static files in production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Only add STATICFILES_DIRS if the directory actually exists
 _static_dir = BASE_DIR / 'static'
 if _static_dir.exists():

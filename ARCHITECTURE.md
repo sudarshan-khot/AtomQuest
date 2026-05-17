@@ -36,6 +36,8 @@ AtomQuest is a performance management portal built for organisations running ann
 
 Every action is recorded in an immutable **Audit Trail**. In-app **Notifications** keep users informed of state changes.
 
+**Deployment**: Hosted on **Vercel** (monorepo `experimentalServices` — frontend as Vite static build, backend as serverless Python). Database is **NeonDB** (serverless PostgreSQL, `ap-southeast-1`).
+
 ---
 
 ## 2. Architecture
@@ -44,18 +46,18 @@ Every action is recorded in an immutable **Audit Trail**. In-app **Notifications
 ┌─────────────────────────────────────────────────────────────┐
 │                        Browser                              │
 │                                                             │
-│   React 18 + Vite                                           │
+│   React 18 + Vite  (Vercel — static CDN)                    │
 │   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
 │   │ AuthCtx  │  │ TanStack │  │  Pages   │  │Components│  │
 │   │ (token)  │  │  Query   │  │ (routes) │  │(UI/layout│  │
 │   └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
 │                      │                                      │
 │              Axios (api/ layer)                             │
-│              /api proxy → :8000                             │
+│              VITE_API_URL → backend service                 │
 └──────────────────────┬──────────────────────────────────────┘
-                       │ HTTP + Token Auth
+                       │ HTTPS + Token Auth
 ┌──────────────────────▼──────────────────────────────────────┐
-│                   Django 4.2 + DRF                          │
+│         Django 4.2 + DRF  (Vercel — serverless Python)      │
 │                                                             │
 │   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
 │   │  Views   │  │Serializers│ │Permissions│ │Validators│  │
@@ -68,10 +70,12 @@ Every action is recorded in an immutable **Audit Trail**. In-app **Notifications
 │   │          │  │ notifs)  │  │  trail)  │               │
 │   └──────────┘  └──────────┘  └──────────┘               │
 └──────────────────────┬──────────────────────────────────────┘
-                       │
-              ┌────────▼────────┐
-              │  SQLite / PgSQL │
-              └─────────────────┘
+                       │ SSL (sslmode=require)
+              ┌────────▼────────────────────┐
+              │  NeonDB — serverless Postgres│
+              │  ap-southeast-1 region       │
+              │  (dev: SQLite local file)    │
+              └─────────────────────────────┘
 ```
 
 ### Request Flow
@@ -88,6 +92,15 @@ Browser → Axios (Authorization: Token <token>)
 ### Authentication
 
 Token-based authentication via DRF `TokenAuthentication`. The frontend stores the token in `localStorage` and attaches it to every request via an Axios request interceptor. On 401, the interceptor clears the token and redirects to `/login`.
+
+### Dev vs Production
+
+| Concern | Development | Production (Vercel) |
+|---|---|---|
+| API calls | Vite proxy `/api` → `localhost:8000` | `VITE_API_URL` env var → Vercel backend |
+| Database | SQLite local file | NeonDB serverless PostgreSQL (SSL required) |
+| Static files | Django dev server | WhiteNoise middleware |
+| Server | `python manage.py runserver` | Vercel serverless Python (gunicorn entrypoint) |
 
 ---
 
@@ -509,27 +522,107 @@ Utility classes like `glass-card`, `btn-primary`, `input-field`, `label`, `field
 
 ## 8. Configuration & Deployment
 
-### Environment Variables (`backend/.env`)
+### Stack Summary
 
-| Variable | Default | Description |
+| Layer | Dev | Production |
 |---|---|---|
-| `SECRET_KEY` | insecure default | Django secret key — **change in production** |
-| `DEBUG` | `True` | Set to `False` in production |
-| `DATABASE_URL` | `sqlite:///db.sqlite3` | SQLite or `postgres://...` |
-| `CORS_ALLOWED_ORIGINS` | `http://localhost:3000` | Comma-separated allowed origins |
-| `ALLOWED_HOSTS` | `localhost,127.0.0.1` | Comma-separated allowed hosts |
-| `CELERY_BROKER_URL` | `redis://localhost:6379/0` | Redis URL for Celery |
+| Frontend | Vite dev server (`localhost:3000`) | Vercel static CDN |
+| Backend | Django `runserver` (`localhost:8000`) | Vercel serverless Python |
+| Database | SQLite (local file) | NeonDB (serverless PostgreSQL) |
+| Static files | Django dev server | WhiteNoise (served by Django on Vercel) |
+
+---
+
+### Environment Variables
+
+#### Backend (`backend/.env` — gitignored, never commit)
+
+| Variable | Dev default | Production value |
+|---|---|---|
+| `SECRET_KEY` | any string | Long random secret — **never reuse dev key** |
+| `DEBUG` | `True` | `False` |
+| `DATABASE_URL` | `sqlite:///db.sqlite3` | NeonDB connection string (see below) |
+| `ALLOWED_HOSTS` | `localhost,127.0.0.1` | Your Vercel backend domain |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:3000` | Your Vercel frontend URL |
+
+**NeonDB connection string format:**
+```
+postgresql://<user>:<password>@<host>/<dbname>?sslmode=require
+```
+The `?sslmode=require` suffix is mandatory — NeonDB rejects unencrypted connections. Django's `dj_database_url` preserves this automatically.
+
+#### Frontend (`frontend/.env` — gitignored)
+
+| Variable | Dev | Production |
+|---|---|---|
+| `VITE_API_URL` | *(empty — Vite proxy handles it)* | Your Vercel backend URL |
+
+In development, leaving `VITE_API_URL` empty means Axios uses a relative base URL and Vite's dev proxy forwards `/api` and `/api-token-auth` to `localhost:8000`. In production, set it to the full backend URL.
+
+---
+
+### Vercel Deployment
+
+The project uses Vercel's `experimentalServices` monorepo architecture (`vercel.json` at the root):
+
+```json
+{
+  "experimentalServices": {
+    "frontend": { "entrypoint": "frontend", "routePrefix": "/", "framework": "vite" },
+    "backend":  { "entrypoint": "backend",  "routePrefix": "/_/backend" }
+  }
+}
+```
+
+On every deploy, Vercel runs `backend/package.json`'s `build` script:
+```
+pip install -r requirements.txt
+python manage.py migrate --noinput
+python manage.py seed_reference_data
+python manage.py seed_test_users
+```
+
+Both seeding commands use `get_or_create` — safe to run on every redeploy with no duplicate data.
+
+**Deploy steps:**
+
+1. Push to GitHub
+2. Import repo at [vercel.com/new](https://vercel.com/new)
+3. Set environment variables in Vercel dashboard → Settings → Environment Variables:
+
+   **Backend service:**
+   - `SECRET_KEY` — generate at [djecrety.ir](https://djecrety.ir)
+   - `DEBUG` → `False`
+   - `DATABASE_URL` → NeonDB connection string
+   - `ALLOWED_HOSTS` → your backend Vercel domain (set after first deploy)
+   - `CORS_ALLOWED_ORIGINS` → your frontend Vercel URL
+
+   **Frontend service:**
+   - `VITE_API_URL` → your backend Vercel URL
+
+4. Deploy. After the first deploy, copy the backend URL and update `ALLOWED_HOSTS` + `CORS_ALLOWED_ORIGINS`, then redeploy.
+
+---
+
+### NeonDB
+
+NeonDB is a serverless PostgreSQL provider. The project connects to the `ap-southeast-1` region instance.
+
+- **SSL**: Always required (`?sslmode=require` in the connection string)
+- **Connection pooling**: `conn_max_age=600` is set in `dj_database_url.config()` — connections are reused for up to 10 minutes per serverless function instance
+- **Branching**: NeonDB supports database branches (like Git branches) — useful for staging environments
+- **Schema**: Django migrations manage the schema. Run `python manage.py migrate` locally against NeonDB to verify before deploying
+
+To connect to NeonDB locally (for debugging or manual queries), set `DATABASE_URL` in `backend/.env` to the NeonDB connection string. The app will use it automatically.
+
+---
 
 ### Production Checklist
 
-- Set `DEBUG=False`
-- Set a strong `SECRET_KEY`
-- Switch `DATABASE_URL` to PostgreSQL
-- Set `ALLOWED_HOSTS` and `CORS_ALLOWED_ORIGINS` to your domain
-- Run `python manage.py collectstatic`
-- Use a production WSGI server (gunicorn, uvicorn)
-- Enable HTTPS — `SECURE_SSL_REDIRECT=True` is auto-applied when `DEBUG=False`
-
-### Docker
-
-A `Dockerfile` and `docker-compose.yml` are provided in `backend/` for containerised deployment. A separate `docker-compose.redis.yml` spins up a Redis container for local development.
+- [ ] `DEBUG=False` in Vercel env vars
+- [ ] Strong `SECRET_KEY` set (not the dev default)
+- [ ] `DATABASE_URL` points to NeonDB
+- [ ] `ALLOWED_HOSTS` includes the Vercel backend domain
+- [ ] `CORS_ALLOWED_ORIGINS` includes the Vercel frontend URL
+- [ ] `VITE_API_URL` set in frontend env vars
+- [ ] NeonDB connection string is **only** in Vercel env vars and local `.env` — never in any committed file

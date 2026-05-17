@@ -9,12 +9,16 @@ python-dateutil==2.8.2
 # ── Excel export — used in portal/utils.py ────────────────────────────────
 openpyxl==3.1.2
 
-# ── Production server (pure Python) ──────────────────────────────────────
+# ── Production server ─────────────────────────────────────────────────────
 gunicorn==21.2.0
 
-# ── NOT included (require C compiler or not used locally) ─────────────────
-# psycopg2-binary  — only needed for PostgreSQL; SQLite works out of the box
-# pandas           — not imported anywhere in the codebase
-# celery           — no tasks dispatched at runtime
-# redis            — no runtime usage
-# python-dotenv    — not imported anywhere in the codebase
+# ── Production database (PostgreSQL / NeonDB) ──────────────────────────────
+# psycopg2-binary 2.9.9 has no wheel for Python 3.13 — use 2.9.12+
+psycopg2-binary==2.9.12
+dj-database-url==2.1.0
+
+# ── Static files (Vercel / production) ────────────────────────────────────
+whitenoise==6.7.0
+
+# ── Environment variables ─────────────────────────────────────────────────
+python-dotenv==1.0.1

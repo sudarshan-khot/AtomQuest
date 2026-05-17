@@ -9,10 +9,11 @@ A full-stack performance management system for organisations to set, track, and 
 | Layer | Technology |
 |---|---|
 | Backend | Django 4.2 · Django REST Framework · Token Auth |
-| Database | SQLite (dev) · PostgreSQL (prod-ready) |
+| Database | SQLite (dev) · NeonDB PostgreSQL (production) |
 | Task Queue | Celery + Redis (configured, not required for dev) |
 | Frontend | React 18 · Vite · TanStack Query v5 |
 | Styling | Tailwind CSS v3 · Custom design tokens |
+| Deployment | Vercel (monorepo — `experimentalServices`) |
 
 ---
 
@@ -107,6 +108,14 @@ To spin up a local Redis container:
 ```bash
 docker compose -f backend/docker-compose.redis.yml up -d
 ```
+
+---
+
+## Deployment
+
+Deployed on **Vercel** using the `experimentalServices` monorepo architecture. The backend runs as a serverless Python service; the frontend is a static Vite build. Database is **NeonDB** (serverless PostgreSQL).
+
+See **[ARCHITECTURE.md § 8](./ARCHITECTURE.md#8-configuration--deployment)** for the full deployment guide.
 
 ---
 

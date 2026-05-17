@@ -45,6 +45,9 @@ backend/.env
 .env
 .env.local
 .env.*.local
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
 
 # Pytest / coverage
 .pytest_cache/

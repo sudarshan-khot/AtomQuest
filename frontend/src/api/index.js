@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://localhost:8000'
+// In development, Vite proxies /api → localhost:8000 so BASE_URL can be empty.
+// In production (Vercel), VITE_API_URL must point to the deployed Django service.
+const BASE_URL = import.meta.env.VITE_API_URL || ''
 
 const api = axios.create({
   baseURL: BASE_URL,
