@@ -7,7 +7,8 @@
     },
     "backend": {
       "entrypoint": "backend",
-      "routePrefix": "/_/backend"
+      "routePrefix": "/_/backend",
+      "buildCommand": "pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py seed_reference_data && python manage.py seed_test_users"
     }
   }
 }
